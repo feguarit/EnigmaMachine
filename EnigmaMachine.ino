@@ -2,12 +2,24 @@
 
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
-int valorDelay = 150;
+//Usado como base os rotores do modelo German Railway (Rocket) de 1941:
+//https://en.wikipedia.org/wiki/Enigma_rotor_details
+char* Rotor1[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ","JGDQOXUSCAMIFRVTPNEWKBLZYH"};
+char* Rotor2[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ","NTZPSFBOKMWRCJDIVLAEYUXHGQ"};
+char* Rotor3[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ","JVIUBHTCDYAKEQZPOSGXNRMWFL"};
+char* Rotor4[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ","QYHOGNECVPUZTFDJAXWMKISRBL"};
+char* Rotor5[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ","QWERTZUIOASDFGHJKPYXCVBNML"};
+
+char* RotorNumeroUm[2];
+char* RotorNumeroDois[2];
+char* RotorNumeroTres[2];
+
+int valorDelay = 200;
 
 int PosicaoX, PosicaoY;
 
 int PosicaoUm = 1, PosicaoDois = 2, PosicaoTres = 3;
-int LetraUm = 0, LetraDois = 0, LetraTres = 0;
+int LetraUm = 3, LetraDois = 7, LetraTres = 12;
 
 char alfabetoCompleto[30] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -28,7 +40,7 @@ byte Seta[8] = {
 };  
 
 void setup() {
-    //Serial.begin(9600);//Serial.print(PosicaoX);
+    Serial.begin(9600);//Serial.print(PosicaoX);
     lcd.begin(16, 2);
     lcd.createChar(0, Seta); 
     apresentacao();
@@ -133,6 +145,7 @@ void loop() {
           PosicaoX = 0;
           PosicaoY = 0;
           lcd.clear();
+          configuraEnigmaMachine();
           exibeAlfabeto();
           montaPagina = 1;
        }
@@ -266,7 +279,107 @@ void exibeAlfabeto() {
   lcd.setCursor(15,01);lcd.write(byte(0));
 }
 
+void configuraEnigmaMachine() {
+  //Carrega Primeiro Rotor
+  if (PosicaoUm == 1) {
+    RotorNumeroUm[0] = Rotor1[0];
+    RotorNumeroUm[1] = Rotor1[1];
+  } else if (PosicaoUm == 2) {
+    RotorNumeroUm[0] = Rotor2[0];
+    RotorNumeroUm[1] = Rotor2[1];
+  } else if (PosicaoUm == 3) {
+    RotorNumeroUm[0] = Rotor3[0];
+    RotorNumeroUm[1] = Rotor3[1];
+  } else if (PosicaoUm == 4) {
+    RotorNumeroUm[0] = Rotor4[0];
+    RotorNumeroUm[1] = Rotor4[1];
+  } else if (PosicaoUm == 5) {
+    RotorNumeroUm[0] = Rotor5[0];
+    RotorNumeroUm[1] = Rotor5[1];
+  } 
+  //Carrega Segundo Rotor
+  if (PosicaoDois == 1) {
+    RotorNumeroDois[0] = Rotor1[0];
+    RotorNumeroDois[1] = Rotor1[1];
+  } else if (PosicaoDois == 2) {
+    RotorNumeroDois[0] = Rotor2[0];
+    RotorNumeroDois[1] = Rotor2[1];
+  } else if (PosicaoDois == 3) {
+    RotorNumeroDois[0] = Rotor3[0];
+    RotorNumeroDois[1] = Rotor3[1];
+  } else if (PosicaoDois == 4) {
+    RotorNumeroDois[0] = Rotor4[0];
+    RotorNumeroDois[1] = Rotor4[1];
+  } else if (PosicaoDois == 5) {
+    RotorNumeroDois[0] = Rotor5[0];
+    RotorNumeroDois[1] = Rotor5[1];
+  }   
+  //Carrega Terceiro Rotor
+  if (PosicaoTres == 1) {
+    RotorNumeroTres[0] = Rotor1[0];
+    RotorNumeroTres[1] = Rotor1[1];
+  } else if (PosicaoTres == 2) {
+    RotorNumeroTres[0] = Rotor2[0];
+    RotorNumeroTres[1] = Rotor2[1];
+  } else if (PosicaoTres == 3) {
+    RotorNumeroTres[0] = Rotor3[0];
+    RotorNumeroTres[1] = Rotor3[1];
+  } else if (PosicaoTres == 4) {
+    RotorNumeroTres[0] = Rotor4[0];
+    RotorNumeroTres[1] = Rotor4[1];
+  } else if (PosicaoTres == 5) {
+    RotorNumeroTres[0] = Rotor5[0];
+    RotorNumeroTres[1] = Rotor5[1];
+  } 
+  //Posiciona Vetores nas Letras Iniciais
+  for (int i=0; i <= 25; i++){
+    if (RotorNumeroUm[0][0] == alfabetoCompleto[LetraUm]) {
+      break;
+    } else {
+      moveRotor(RotorNumeroUm);
+    }
+  }
+  for (int i=0; i <= 25; i++){
+    if (RotorNumeroDois[0][0] == alfabetoCompleto[LetraDois]) {
+      break;
+    } else {
+      moveRotor(RotorNumeroDois);
+    }
+  }
+  for (int i=0; i <= 25; i++){
+    if (RotorNumeroTres[0][0] == alfabetoCompleto[LetraTres]) {
+      break;
+    } else {
+      moveRotor(RotorNumeroTres);
+    }
+  }
+  Serial.print(RotorNumeroUm[0]);
+  Serial.print("\n");
+  Serial.print(RotorNumeroUm[1]);
+  Serial.print("\n");  
+  Serial.print(RotorNumeroDois[0]);
+  Serial.print("\n");
+  Serial.print(RotorNumeroDois[1]);
+  Serial.print("\n");  
+  Serial.print(RotorNumeroTres[0]);
+  Serial.print("\n");  
+  Serial.print(RotorNumeroTres[1]);  
+}
+
+void moveRotor(char** rotor) {
+  char primeiraVogal = rotor[0][0];
+  char primeiraVogalEspelho = rotor[1][0];
+  for (int i=0; i <= 24; i++){
+    rotor[0][i] = rotor[0][i+1];
+    rotor[1][i] = rotor[1][i+1];
+  }
+  rotor[0][25] = primeiraVogal;
+  rotor[1][25] = primeiraVogalEspelho;
+}
+
 void criptoDescripto(int x, int y) {
+  //Em desenvolvimento ainda...
+  //Incluido essa lógica apenas para testar a tela
   if (y == 0) {
     lcd.print(alfabetoLinha2[x]);
   } else if (y == 1) {
